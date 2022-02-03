@@ -1,15 +1,16 @@
 package com.example.demo;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Random;
+import org.springframework.beans.factory.NoSuchBeanDefinitionException;
+import org.springframework.beans.factory.NoUniqueBeanDefinitionException;
+
+import java.util.*;
 
 class WaffleCreator {
 
     Waffle prepare(String name, Waffle.Type type) {
         if (type == Waffle.Type.LOW_SUGAR) {
             MacronutrientsProvider ingredientsProvider
-                    = MacronutrientsProviderFactory.get("low sugar");
+                    = (MacronutrientsProvider) TypeFactory.get(MacronutrientsProvider.class, "low sugar");
             Macronutrients macro = ingredientsProvider.fetch();
             if (macro.isFit()) {
                 return new Waffle(name, macro);
@@ -18,7 +19,7 @@ class WaffleCreator {
         }
         if (type == Waffle.Type.SUPER_SWEET) {
             MacronutrientsProvider ingredientsProvider
-                    = MacronutrientsProviderFactory.get("fat");
+                    = (MacronutrientsProvider) TypeFactory.get(MacronutrientsProvider.class, "fat");
             Macronutrients macro = ingredientsProvider.fetch();
             if (macro.hasMuchSugar()) {
                 return new Waffle(name, macro);
@@ -29,17 +30,50 @@ class WaffleCreator {
 
 }
 
-class MacronutrientsProviderFactory {
+class Dep {
 
-    static Map<String, MacronutrientsProvider> providers = new HashMap<>();
+    String name;
+    Object dep;
 
-    static void put(String name, MacronutrientsProvider provider) {
-        providers.put(name, provider);
+    Dep(String name, Object dep) {
+        this.name = name;
+        this.dep = dep;
+    }
+}
+
+class TypeFactory {
+
+
+    static Map<Class, List<Dep>> providers = new HashMap<>();
+
+    static void put(String name, Object object) {
+        put(name, object, object.getClass());
     }
 
-    static MacronutrientsProvider get(String name) {
-        return providers.get(name);
+    public static void put(String name, Object object, Class cls) {
+        List<Dep> deps = providers.getOrDefault(cls, new ArrayList<>());
+        deps.add(new Dep(name, object));
+        providers.put(cls, deps);
     }
+
+    static Object get(Class cls) {
+        List<Dep> deps = providers.get(cls);
+        if (deps.size() == 1) {
+            return deps.get(0);
+        }
+        throw new NoUniqueBeanDefinitionException(cls, "names of found beans");
+    }
+
+    static Object get(Class cls, String name) {
+        return providers.getOrDefault(cls, new ArrayList<>())
+                .stream()
+                .filter(dep -> dep.name.equals(name))
+                .map(dep -> dep.dep)
+                .findFirst()
+                .orElseThrow(() -> new NoSuchBeanDefinitionException(name));
+
+    }
+
 
 }
 
