@@ -2,25 +2,35 @@ package com.example.demo;
 
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.beans.factory.NoUniqueBeanDefinitionException;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.stereotype.Component;
 
 import java.util.*;
 
+@Component
 class WaffleCreator {
+
+    private final MacronutrientsProvider lowSugar;
+    private final MacronutrientsProvider fat;
+
+    WaffleCreator(@Qualifier("lowSugarProvider")
+                          MacronutrientsProvider lowSugar,
+                  @Qualifier("fatProvider")
+                          MacronutrientsProvider fat) {
+        this.lowSugar = lowSugar;
+        this.fat = fat;
+    }
 
     Waffle prepare(String name, Waffle.Type type) {
         if (type == Waffle.Type.LOW_SUGAR) {
-            MacronutrientsProvider ingredientsProvider
-                    = (MacronutrientsProvider) TypeFactory.get(MacronutrientsProvider.class, "low sugar");
-            Macronutrients macro = ingredientsProvider.fetch();
+            Macronutrients macro = lowSugar.fetch();
             if (macro.isFit()) {
                 return new Waffle(name, macro);
             }
             throw new TooFatWaffle();
         }
         if (type == Waffle.Type.SUPER_SWEET) {
-            MacronutrientsProvider ingredientsProvider
-                    = (MacronutrientsProvider) TypeFactory.get(MacronutrientsProvider.class, "fat");
-            Macronutrients macro = ingredientsProvider.fetch();
+            Macronutrients macro = fat.fetch();
             if (macro.hasMuchSugar()) {
                 return new Waffle(name, macro);
             }
@@ -30,68 +40,35 @@ class WaffleCreator {
 
 }
 
-class Dep {
 
-    String name;
-    Object dep;
+interface MacronutrientsProvider {
 
-    Dep(String name, Object dep) {
-        this.name = name;
-        this.dep = dep;
-    }
+    Macronutrients fetch();
 }
 
-class TypeFactory {
+@Component
+class FatProvider implements MacronutrientsProvider {
 
+    private final String url = "http://fat.com";
 
-    static Map<Class, List<Dep>> providers = new HashMap<>();
-
-    static void put(String name, Object object) {
-        put(name, object, object.getClass());
-    }
-
-    public static void put(String name, Object object, Class cls) {
-        List<Dep> deps = providers.getOrDefault(cls, new ArrayList<>());
-        deps.add(new Dep(name, object));
-        providers.put(cls, deps);
-    }
-
-    static Object get(Class cls) {
-        List<Dep> deps = providers.get(cls);
-        if (deps.size() == 1) {
-            return deps.get(0);
-        }
-        throw new NoUniqueBeanDefinitionException(cls, "names of found beans");
-    }
-
-    static Object get(Class cls, String name) {
-        return providers.getOrDefault(cls, new ArrayList<>())
-                .stream()
-                .filter(dep -> dep.name.equals(name))
-                .map(dep -> dep.dep)
-                .findFirst()
-                .orElseThrow(() -> new NoSuchBeanDefinitionException(name));
-
-    }
-
-
-}
-
-
-class MacronutrientsProvider {
-
-    private final String url;
-
-    MacronutrientsProvider(String url) {
-        this.url = url;
-    }
-
-    Macronutrients fetch() {
+    public Macronutrients fetch() {
         //do http call...
         Random rand = new Random(100);
         return new Macronutrients(rand.nextFloat(), rand.nextFloat(), rand.nextFloat());
     }
 
+}
+
+@Component
+class LowSugarProvider implements MacronutrientsProvider {
+
+    private final String url = "http://lowsugar.com";
+
+    public Macronutrients fetch() {
+        //do http call...
+        Random rand = new Random(100);
+        return new Macronutrients(rand.nextFloat(), rand.nextFloat(), rand.nextFloat());
+    }
 
 }
 

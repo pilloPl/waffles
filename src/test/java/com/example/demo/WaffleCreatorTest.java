@@ -1,21 +1,35 @@
 package com.example.demo;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+@SpringBootTest
 class WaffleCreatorTest {
 
-    WaffleCreator waffleCreator = new WaffleCreator();
+    @Autowired
+    WaffleCreator waffleCreator;
+
+    @MockBean(name = "fatProvider")
+    MacronutrientsProvider fatProvider;
+
+    @MockBean(name = "lowSugarProvider")
+    MacronutrientsProvider lowSugarProvider;
+
+    @BeforeEach
+    void setup() {
+        Mockito.when(lowSugarProvider.fetch()).thenReturn(new Macronutrients(5, 50, 10));
+        Mockito.when(fatProvider.fetch()).thenReturn(new Macronutrients(70, 10, 50));
+
+    }
 
     @Test
     void canCreateFitWaffle() {
-        //given
-        MacronutrientsProvider lowSugar = Mockito.mock(MacronutrientsProvider.class);
-        Mockito.when(lowSugar.fetch()).thenReturn(new Macronutrients(5, 50, 10));
-        TypeFactory.put("low sugar", lowSugar, MacronutrientsProvider.class);
-
         //when
         Waffle fitDiamond = waffleCreator.prepare("FIT DIAMOND", Waffle.Type.LOW_SUGAR);
 
@@ -25,16 +39,11 @@ class WaffleCreatorTest {
 
     @Test
     void canCreateFatWaffle() {
-        //given
-        MacronutrientsProvider muchSugar = Mockito.mock(MacronutrientsProvider.class);
-        Mockito.when(muchSugar.fetch()).thenReturn(new Macronutrients(100, 50, 30));
-        TypeFactory.put("fat", muchSugar, MacronutrientsProvider.class);
-
         //when
-        Waffle fitDiamond = waffleCreator.prepare("FIT DIAMOND", Waffle.Type.SUPER_SWEET);
+        Waffle fatty = waffleCreator.prepare("FATTY", Waffle.Type.SUPER_SWEET);
 
         //then
-        assertThat(fitDiamond.isLowSugar()).isFalse();
+        assertThat(fatty.isLowSugar()).isFalse();
     }
 
 }
