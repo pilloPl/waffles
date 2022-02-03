@@ -7,16 +7,14 @@ import org.springframework.stereotype.Component;
 
 import java.util.*;
 
-@Component
 class WaffleCreator {
 
     private final MacronutrientsProvider lowSugar;
     private final MacronutrientsProvider fat;
 
-    WaffleCreator(@Qualifier("lowSugarProvider")
-                          MacronutrientsProvider lowSugar,
-                  @Qualifier("fatProvider")
-                          MacronutrientsProvider fat) {
+    WaffleCreator(
+            MacronutrientsProvider lowSugar,
+            MacronutrientsProvider fat) {
         this.lowSugar = lowSugar;
         this.fat = fat;
     }
@@ -46,7 +44,6 @@ interface MacronutrientsProvider {
     Macronutrients fetch();
 }
 
-@Component
 class FatProvider implements MacronutrientsProvider {
 
     private final String url = "http://fat.com";
@@ -59,7 +56,6 @@ class FatProvider implements MacronutrientsProvider {
 
 }
 
-@Component
 class LowSugarProvider implements MacronutrientsProvider {
 
     private final String url = "http://lowsugar.com";
