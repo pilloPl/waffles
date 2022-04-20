@@ -19,8 +19,11 @@ class WaffleCreatorTest {
 
     @Test
     void canCreateFitWaffle() {
+        //when
+        Waffle fit = waffleCreator.prepare("FIT DIAMOND", Waffle.Type.LOW_SUGAR);
 
-
+        //then
+        assertThat(fit.isLowSugar()).isTrue();
     }
 
 

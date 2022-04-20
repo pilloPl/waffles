@@ -1,5 +1,8 @@
 package com.example.demo;
 
+import java.util.HashMap;
+import java.util.Map;
+
 class WaffleCreator {
 
     Waffle prepare(String name, Waffle.Type type) {
@@ -23,6 +26,20 @@ class WaffleCreator {
             }
         }
         return new Waffle(name, new Macronutrients(0, 0, 0));
+    }
+
+}
+
+class MacronutrientsProviderLocator {
+
+    static Map<String, MacronutrientsProvider> providers = new HashMap<>();
+
+    static void put(String name, MacronutrientsProvider provider) {
+        providers.put(name, provider);
+    }
+
+    static MacronutrientsProvider get(String name) {
+        return providers.get(name);
     }
 
 }
