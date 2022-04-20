@@ -1,7 +1,5 @@
 package com.example.demo;
 
-import java.util.Random;
-
 class WaffleCreator {
 
     Waffle prepare(String name, Waffle.Type type) {
@@ -12,7 +10,7 @@ class WaffleCreator {
             if (macro.isFit()) {
                 return new Waffle(name, macro);
             }
-            throw new TooFatWaffle();
+            throw new TooSweetWaffle();
         }
         if (type == Waffle.Type.SUPER_SWEET) {
             MacronutrientsProvider ingredientsProvider
@@ -20,6 +18,8 @@ class WaffleCreator {
             Macronutrients macro = ingredientsProvider.fetch();
             if (macro.hasMuchSugar()) {
                 return new Waffle(name, macro);
+            } else {
+                throw new NotEnoughSugar();
             }
         }
         return new Waffle(name, new Macronutrients(0, 0, 0));
@@ -28,44 +28,7 @@ class WaffleCreator {
 }
 
 
-class MacronutrientsProvider {
-    private final String url;
-
-    MacronutrientsProvider(String url) {
-        this.url = url;
-    }
-
-    Macronutrients fetch() {
-        //do http call...
-        Random rand = new Random(100);
-        return new Macronutrients(rand.nextFloat(), rand.nextFloat(), rand.nextFloat());
-    }
-
-
-}
-
-class Macronutrients {
-    private final float sugar;
-    private final float protein;
-    private final float fat;
-
-
-    Macronutrients(float sugar, float protein, float fat) {
-        this.sugar = sugar;
-        this.protein = protein;
-        this.fat = fat;
-    }
-
-    public boolean hasMuchSugar() {
-        return sugar > 50;
-    }
-
-    public boolean isFit() {
-        return protein > 30 && sugar < 15;
-    }
-}
-
-class TooFatWaffle extends RuntimeException {
+class TooSweetWaffle extends RuntimeException {
 
 }
 
