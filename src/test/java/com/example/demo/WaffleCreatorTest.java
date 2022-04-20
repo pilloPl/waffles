@@ -14,7 +14,7 @@ class WaffleCreatorTest {
         //when
         MacronutrientsProvider mock = Mockito.mock(MacronutrientsProvider.class);
         Mockito.when(mock.fetch()).thenReturn(new Macronutrients(100, 10, 10));
-        ServiceLocator.put("much sugar", mock, MacronutrientsProvider.class);
+        BeanFactory.put("much sugar", mock, MacronutrientsProvider.class);
         Waffle withSugar = waffleCreator.prepare("FIT DIAMOND", Waffle.Type.SUPER_SWEET);
 
         //then
@@ -26,7 +26,7 @@ class WaffleCreatorTest {
         //when
         MacronutrientsProvider mock = Mockito.mock(MacronutrientsProvider.class);
         Mockito.when(mock.fetch()).thenReturn(new Macronutrients(10, 40, 10));
-        ServiceLocator.put("fit", mock, MacronutrientsProvider.class);
+        BeanFactory.put("fit", mock, MacronutrientsProvider.class);
         Waffle fit = waffleCreator.prepare("FIT DIAMOND", Waffle.Type.LOW_SUGAR);
 
         //then
