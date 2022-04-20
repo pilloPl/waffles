@@ -1,6 +1,5 @@
 package com.example.demo;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -10,7 +9,7 @@ class WaffleCreator {
     Waffle prepare(String name, Waffle.Type type) {
         if (type == Waffle.Type.LOW_SUGAR) {
             MacronutrientsProvider ingredientsProvider =
-                    TypeFactory.get(MacronutrientsProvider.class, "fit");
+                    ServiceLocator.get(MacronutrientsProvider.class, "fit");
             Macronutrients macro = ingredientsProvider.fetch();
             if (macro.isFit()) {
                 return new Waffle(name, macro);
@@ -19,7 +18,7 @@ class WaffleCreator {
         }
         if (type == Waffle.Type.SUPER_SWEET) {
             MacronutrientsProvider ingredientsProvider =
-                    TypeFactory.get(MacronutrientsProvider.class, "much sugar");
+                    ServiceLocator.get(MacronutrientsProvider.class, "much sugar");
             Macronutrients macro = ingredientsProvider.fetch();
             if (macro.hasMuchSugar()) {
                 return new Waffle(name, macro);
@@ -43,7 +42,7 @@ class DepDefinition {
     }
 }
 
-class TypeFactory {
+class ServiceLocator {
 
     static Map<Class, List<DepDefinition>> providers = new HashMap<>();
 
