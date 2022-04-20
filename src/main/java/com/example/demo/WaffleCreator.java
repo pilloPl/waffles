@@ -1,33 +1,34 @@
 package com.example.demo;
 
-import org.springframework.beans.factory.NoSuchBeanDefinitionException;
-import org.springframework.beans.factory.NoUniqueBeanDefinitionException;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
-
+@Service
 class WaffleCreator {
+
+
+    private final MacronutrientsProvider fit;
+    private final MacronutrientsProvider fat;
+
+    WaffleCreator(MacronutrientsProvider fit, MacronutrientsProvider fat) {
+        this.fit = fit;
+        this.fat = fat;
+    }
 
     Waffle prepare(String name, Waffle.Type type) {
         if (type == Waffle.Type.LOW_SUGAR) {
-            MacronutrientsProvider ingredientsProvider =
-                    BeanFactory.get(MacronutrientsProvider.class, "fit");
-            Macronutrients macro = ingredientsProvider.fetch();
+
+            Macronutrients macro = fit.fetch();
             if (macro.isFit()) {
                 return new Waffle(name, macro);
             }
             throw new TooSweetWaffle();
         }
         if (type == Waffle.Type.SUPER_SWEET) {
-            MacronutrientsProvider ingredientsProvider =
-                    BeanFactory.get(MacronutrientsProvider.class, "much sugar");
-            Macronutrients macro = ingredientsProvider.fetch();
+
+            Macronutrients macro = fat.fetch();
             if (macro.hasMuchSugar()) {
                 return new Waffle(name, macro);
             } else {
@@ -37,6 +38,20 @@ class WaffleCreator {
         return new Waffle(name, new Macronutrients(0, 0, 0));
     }
 
+}
+
+@Configuration
+class BeanConfig {
+
+    @Bean
+    public MacronutrientsProvider fit() {
+        return new MacronutrientsProvider("http://fit.com");
+    }
+
+    @Bean
+    public MacronutrientsProvider fat() {
+        return new MacronutrientsProvider("http://fat.com");
+    }
 }
 
 
