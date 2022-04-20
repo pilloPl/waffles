@@ -1,14 +1,16 @@
 package com.example.demo;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 class WaffleCreator {
 
     Waffle prepare(String name, Waffle.Type type) {
         if (type == Waffle.Type.LOW_SUGAR) {
-            MacronutrientsProvider ingredientsProvider
-                    = new MacronutrientsProvider("http://lowsugar.com");
+            MacronutrientsProvider ingredientsProvider =
+                    TypeFactory.get(MacronutrientsProvider.class, "fit");
             Macronutrients macro = ingredientsProvider.fetch();
             if (macro.isFit()) {
                 return new Waffle(name, macro);
@@ -16,8 +18,8 @@ class WaffleCreator {
             throw new TooSweetWaffle();
         }
         if (type == Waffle.Type.SUPER_SWEET) {
-            MacronutrientsProvider ingredientsProvider
-                    = new MacronutrientsProvider("http://ilovesugar.com");
+            MacronutrientsProvider ingredientsProvider =
+                    TypeFactory.get(MacronutrientsProvider.class, "much sugar");
             Macronutrients macro = ingredientsProvider.fetch();
             if (macro.hasMuchSugar()) {
                 return new Waffle(name, macro);
@@ -30,17 +32,38 @@ class WaffleCreator {
 
 }
 
-class MacronutrientsProviderLocator {
+class DepDefinition {
 
-    static Map<String, MacronutrientsProvider> providers = new HashMap<>();
+    String name;
+    Object dep;
 
-    static void put(String name, MacronutrientsProvider provider) {
-        providers.put(name, provider);
+    DepDefinition(String name, Object dep) {
+        this.name = name;
+        this.dep = dep;
+    }
+}
+
+class TypeFactory {
+
+    static Map<Class, List<DepDefinition>> providers = new HashMap<>();
+
+    static void put(String name, Object object) {
+        put(name, object, object.getClass());
     }
 
-    static MacronutrientsProvider get(String name) {
-        return providers.get(name);
+    public static void put(String name, Object object, Class cls) {
+
     }
+
+    static <T> T get(Class<T> cls) {
+        return null;
+    }
+
+    static <T> T get(Class<T> cls, String name) {
+        return null;
+
+    }
+
 
 }
 
@@ -50,5 +73,13 @@ class TooSweetWaffle extends RuntimeException {
 }
 
 class NotEnoughSugar extends RuntimeException {
+
+}
+
+class NoUniqueDepDefinitionException extends RuntimeException {
+
+}
+
+class NoSuchDepDefinitionException extends RuntimeException {
 
 }
