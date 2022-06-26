@@ -11,20 +11,20 @@ class WaffleCreatorTest {
     @Test
     void canCreateLowSugarWaffle() {
         //when
-        Waffle fitDiamond = waffleCreator.prepare("PROTEIN BAR", Waffle.Type.LOW_SUGAR);
+        Waffle lowSugarBar = waffleCreator.prepare("PROTEIN BAR", Waffle.Type.LOW_SUGAR);
 
         //then
-        assertThat(fitDiamond.isLowSugar()).isTrue();
+        assertThat(lowSugarBar.isLowSugar()).isTrue();
 
     }
 
     @Test
     void canCreateHighSugarWaffle() {
         //when
-        Waffle fitDiamond = waffleCreator.prepare("CHOCOLATE BAR", Waffle.Type.HIGH_SUGAR);
+        Waffle highSugarBar = waffleCreator.prepare("CHOCOLATE BAR", Waffle.Type.HIGH_SUGAR);
 
         //then
-        assertThat(fitDiamond.isLowSugar()).isFalse();
+        assertThat(highSugarBar.isLowSugar()).isFalse();
     }
 
 }
