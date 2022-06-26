@@ -7,20 +7,21 @@ class WaffleCreator {
     Waffle prepare(String name, Waffle.Type type) {
         if (type == Waffle.Type.LOW_SUGAR) {
             MacronutrientsProvider ingredientsProvider
-                    = new MacronutrientsProvider("http://lowsugar.com");
+                    = new MacronutrientsProvider("http://nosugar.com");
             Macronutrients macro = ingredientsProvider.fetch();
-            if (macro.isFit()) {
+            if (macro.isLowSugar()) {
                 return new Waffle(name, macro);
             }
-            throw new TooFatWaffle();
+            throw new HighSugarWaffle();
         }
-        if (type == Waffle.Type.SUPER_SWEET) {
+        if (type == Waffle.Type.HIGH_SUGAR) {
             MacronutrientsProvider ingredientsProvider
-                    = new MacronutrientsProvider("http://ilovesugar.com");
+                    = new MacronutrientsProvider("http://gimmesugar.com");
             Macronutrients macro = ingredientsProvider.fetch();
-            if (macro.hasMuchSugar()) {
+            if (macro.isHighSugar()) {
                 return new Waffle(name, macro);
             }
+            throw new LowSugarWaffle();
         }
         return new Waffle(name, new Macronutrients(0, 0, 0));
     }
@@ -37,8 +38,11 @@ class MacronutrientsProvider {
 
     Macronutrients fetch() {
         //do http call...
+        if (new Random().nextBoolean()) {
+            throw new IllegalStateException();
+        }
         Random rand = new Random(100);
-        return new Macronutrients(rand.nextFloat(), rand.nextFloat(), rand.nextFloat());
+        return new Macronutrients(rand.nextFloat() * 100, rand.nextFloat() * 100, rand.nextFloat() * 100);
     }
 
 
@@ -56,19 +60,19 @@ class Macronutrients {
         this.fat = fat;
     }
 
-    public boolean hasMuchSugar() {
+    public boolean isHighSugar() {
         return sugar > 50;
     }
 
-    public boolean isFit() {
-        return protein > 30 && sugar < 15;
+    public boolean isLowSugar() {
+        return sugar <= 40;
     }
 }
 
-class TooFatWaffle extends RuntimeException {
+class HighSugarWaffle extends RuntimeException {
 
 }
 
-class NotEnoughSugar extends RuntimeException {
+class LowSugarWaffle extends RuntimeException {
 
 }

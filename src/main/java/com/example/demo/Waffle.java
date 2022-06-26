@@ -3,7 +3,7 @@ package com.example.demo;
 class Waffle {
 
     enum Type {
-        LOW_SUGAR, SUPER_SWEET, REGULAR
+        LOW_SUGAR, HIGH_SUGAR, REGULAR
     }
 
     private final String name;
@@ -15,7 +15,7 @@ class Waffle {
     }
 
     boolean isLowSugar() {
-        return !macro.hasMuchSugar();
+        return !macro.isHighSugar();
     }
 
 

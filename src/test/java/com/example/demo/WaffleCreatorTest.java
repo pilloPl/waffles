@@ -3,16 +3,15 @@ package com.example.demo;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
 
 class WaffleCreatorTest {
 
     WaffleCreator waffleCreator = new WaffleCreator();
 
     @Test
-    void canCreateFitWaffle() {
+    void canCreateLowSugarWaffle() {
         //when
-        Waffle fitDiamond = waffleCreator.prepare("FIT DIAMOND", Waffle.Type.LOW_SUGAR);
+        Waffle fitDiamond = waffleCreator.prepare("PROTEIN BAR", Waffle.Type.LOW_SUGAR);
 
         //then
         assertThat(fitDiamond.isLowSugar()).isTrue();
@@ -20,12 +19,12 @@ class WaffleCreatorTest {
     }
 
     @Test
-    void canCreateFatWaffle() {
+    void canCreateHighSugarWaffle() {
         //when
-        Waffle fitDiamond = waffleCreator.prepare("FIT DIAMOND", Waffle.Type.LOW_SUGAR);
+        Waffle fitDiamond = waffleCreator.prepare("CHOCOLATE BAR", Waffle.Type.HIGH_SUGAR);
 
         //then
-        assertThat(fitDiamond.isLowSugar()).isTrue();
+        assertThat(fitDiamond.isLowSugar()).isFalse();
     }
 
 }
