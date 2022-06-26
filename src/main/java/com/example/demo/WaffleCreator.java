@@ -1,35 +1,30 @@
 package com.example.demo;
 
-import org.springframework.beans.factory.NoSuchBeanDefinitionException;
-import org.springframework.beans.factory.NoUniqueBeanDefinitionException;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.stereotype.Component;
-
 import java.util.*;
 
 class WaffleCreator {
 
     private final MacronutrientsProvider lowSugar;
-    private final MacronutrientsProvider fat;
+    private final MacronutrientsProvider highSugar;
 
     WaffleCreator(
             MacronutrientsProvider lowSugar,
-            MacronutrientsProvider fat) {
+            MacronutrientsProvider highSugar) {
         this.lowSugar = lowSugar;
-        this.fat = fat;
+        this.highSugar = highSugar;
     }
 
     Waffle prepare(String name, Waffle.Type type) {
         if (type == Waffle.Type.LOW_SUGAR) {
             Macronutrients macro = lowSugar.fetch();
-            if (macro.isFit()) {
+            if (macro.isLowSugar()) {
                 return new Waffle(name, macro);
             }
-            throw new TooFatWaffle();
+            throw new HighSugarWaffle();
         }
-        if (type == Waffle.Type.SUPER_SWEET) {
-            Macronutrients macro = fat.fetch();
-            if (macro.hasMuchSugar()) {
+        if (type == Waffle.Type.HIGH_SUGAR) {
+            Macronutrients macro = highSugar.fetch();
+            if (macro.isHighSugar()) {
                 return new Waffle(name, macro);
             }
         }
@@ -38,15 +33,14 @@ class WaffleCreator {
 
 }
 
-
 interface MacronutrientsProvider {
 
     Macronutrients fetch();
 }
 
-class FatProvider implements MacronutrientsProvider {
+class HighSugarProvider implements MacronutrientsProvider {
 
-    private final String url = "http://fat.com";
+    private final String url = "http://gimmeSugar.com";
 
     public Macronutrients fetch() {
         //do http call...
@@ -58,7 +52,7 @@ class FatProvider implements MacronutrientsProvider {
 
 class LowSugarProvider implements MacronutrientsProvider {
 
-    private final String url = "http://lowsugar.com";
+    private final String url = "http://nosugar.com";
 
     public Macronutrients fetch() {
         //do http call...
@@ -68,31 +62,10 @@ class LowSugarProvider implements MacronutrientsProvider {
 
 }
 
-class Macronutrients {
-    private final float sugar;
-    private final float protein;
-    private final float fat;
-
-
-    Macronutrients(float sugar, float protein, float fat) {
-        this.sugar = sugar;
-        this.protein = protein;
-        this.fat = fat;
-    }
-
-    public boolean hasMuchSugar() {
-        return sugar > 50;
-    }
-
-    public boolean isFit() {
-        return protein > 30 && sugar < 15;
-    }
-}
-
-class TooFatWaffle extends RuntimeException {
+class HighSugarWaffle extends RuntimeException {
 
 }
 
-class NotEnoughSugar extends RuntimeException {
+class LowSugarWaffle extends RuntimeException {
 
 }

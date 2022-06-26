@@ -3,7 +3,7 @@ package com.example.demo;
 class Waffle {
 
     enum Type {
-        LOW_SUGAR, SUPER_SWEET, REGULAR
+        LOW_SUGAR, HIGH_SUGAR, REGULAR
     }
 
     private final String name;
@@ -15,8 +15,31 @@ class Waffle {
     }
 
     boolean isLowSugar() {
-        return !macro.hasMuchSugar();
+        return !macro.isHighSugar();
     }
 
 
 }
+
+
+class Macronutrients {
+    private final float sugar;
+    private final float protein;
+    private final float fat;
+
+
+    Macronutrients(float sugar, float protein, float fat) {
+        this.sugar = sugar;
+        this.protein = protein;
+        this.fat = fat;
+    }
+
+    public boolean isHighSugar() {
+        return sugar > 50;
+    }
+
+    public boolean isLowSugar() {
+        return protein > 30 && sugar < 15;
+    }
+}
+

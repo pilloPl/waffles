@@ -15,8 +15,8 @@ class WaffleCreatorTest {
     @Autowired
     WaffleCreator waffleCreator;
 
-    @MockBean(name = "fatProvider")
-    MacronutrientsProvider fatProvider;
+    @MockBean(name = "highSugarProvider")
+    MacronutrientsProvider highSugarProvider;
 
     @MockBean(name = "lowSugarProvider")
     MacronutrientsProvider lowSugarProvider;
@@ -24,26 +24,27 @@ class WaffleCreatorTest {
     @BeforeEach
     void setup() {
         Mockito.when(lowSugarProvider.fetch()).thenReturn(new Macronutrients(5, 50, 10));
-        Mockito.when(fatProvider.fetch()).thenReturn(new Macronutrients(70, 10, 50));
+        Mockito.when(highSugarProvider.fetch()).thenReturn(new Macronutrients(70, 10, 50));
 
     }
 
     @Test
-    void canCreateFitWaffle() {
+    void canCreateLowSugarWaffle() {
         //when
-        Waffle fitDiamond = waffleCreator.prepare("FIT DIAMOND", Waffle.Type.LOW_SUGAR);
+        Waffle lowSugarBar = waffleCreator.prepare("PROTEIN BAR", Waffle.Type.LOW_SUGAR);
 
         //then
-        assertThat(fitDiamond.isLowSugar()).isTrue();
+        assertThat(lowSugarBar.isLowSugar()).isTrue();
+
     }
 
     @Test
-    void canCreateFatWaffle() {
+    void canCreateHighSugarWaffle() {
         //when
-        Waffle fatty = waffleCreator.prepare("FATTY", Waffle.Type.SUPER_SWEET);
+        Waffle highSugarBar = waffleCreator.prepare("CHOCOLATE BAR", Waffle.Type.HIGH_SUGAR);
 
         //then
-        assertThat(fatty.isLowSugar()).isFalse();
+        assertThat(highSugarBar.isLowSugar()).isFalse();
     }
 
 }
