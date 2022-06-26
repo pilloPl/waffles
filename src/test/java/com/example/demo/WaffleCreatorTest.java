@@ -10,28 +10,29 @@ class WaffleCreatorTest {
     WaffleCreator waffleCreator = new WaffleCreator();
 
     @Test
-    void canCreateSweetWaffle() {
+    void canCreateLowSugarWaffle() {
+        //given
+        MacronutrientsProvider stubbed = Mockito.mock(MacronutrientsProvider.class);
+        Mockito.when(stubbed.fetch()).thenReturn(new Macronutrients(1, 1, 1));
+
         //when
-        MacronutrientsProvider mock = Mockito.mock(MacronutrientsProvider.class);
-        Mockito.when(mock.fetch()).thenReturn(new Macronutrients(100, 10, 10));
-        ServiceLocator.put("much sugar", mock, MacronutrientsProvider.class);
-        Waffle withSugar = waffleCreator.prepare("FIT DIAMOND", Waffle.Type.SUPER_SWEET);
+        Waffle lowSugarBar = waffleCreator.prepare("PROTEIN BAR", Waffle.Type.LOW_SUGAR);
 
         //then
-        assertThat(withSugar.isLowSugar()).isFalse();
+        assertThat(lowSugarBar.isLowSugar()).isTrue();
+
     }
 
     @Test
-    void canCreateFitWaffle() {
+    void canCreateHighSugarWaffle() {
+        //given
+        MacronutrientsProvider stubbed = Mockito.mock(MacronutrientsProvider.class);
+        Mockito.when(stubbed.fetch()).thenReturn(new Macronutrients(100, 1, 1));
         //when
-        MacronutrientsProvider mock = Mockito.mock(MacronutrientsProvider.class);
-        Mockito.when(mock.fetch()).thenReturn(new Macronutrients(10, 40, 10));
-        ServiceLocator.put("fit", mock, MacronutrientsProvider.class);
-        Waffle fit = waffleCreator.prepare("FIT DIAMOND", Waffle.Type.LOW_SUGAR);
+        Waffle highSugarBar = waffleCreator.prepare("CHOCOLATE BAR", Waffle.Type.HIGH_SUGAR);
 
         //then
-        assertThat(fit.isLowSugar()).isTrue();
+        assertThat(highSugarBar.isLowSugar()).isFalse();
     }
-
 
 }
