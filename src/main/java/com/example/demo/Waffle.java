@@ -19,4 +19,26 @@ class Waffle {
     }
 
 
+
+}
+
+class Macronutrients {
+    private final float sugar;
+    private final float protein;
+    private final float fat;
+
+
+    Macronutrients(float sugar, float protein, float fat) {
+        this.sugar = sugar;
+        this.protein = protein;
+        this.fat = fat;
+    }
+
+    public boolean isHighSugar() {
+        return sugar > 50;
+    }
+
+    public boolean isLowSugar() {
+        return sugar <= 40;
+    }
 }
