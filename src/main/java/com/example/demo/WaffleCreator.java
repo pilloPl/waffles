@@ -1,17 +1,22 @@
 package com.example.demo;
 
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
+
 import java.util.*;
 
+@Service
 class WaffleCreator {
 
     private final MacronutrientsProvider lowSugar;
     private final MacronutrientsProvider highSugar;
 
     WaffleCreator(
-            MacronutrientsProvider lowSugar,
-            MacronutrientsProvider highSugar) {
-        this.lowSugar = lowSugar;
-        this.highSugar = highSugar;
+           @Qualifier("lowSugarProvider") MacronutrientsProvider ls,
+            MacronutrientsProvider highSugarProvider) {
+        this.lowSugar = ls;
+        this.highSugar = highSugarProvider;
     }
 
     Waffle prepare(String name, Waffle.Type type) {
@@ -33,11 +38,13 @@ class WaffleCreator {
 
 }
 
+
 interface MacronutrientsProvider {
 
     Macronutrients fetch();
 }
 
+@Service("highSugarProvider")
 class HighSugarProvider implements MacronutrientsProvider {
 
     private final String url = "http://gimmeSugar.com";
@@ -50,6 +57,7 @@ class HighSugarProvider implements MacronutrientsProvider {
 
 }
 
+@Component("lowSugarProvider")
 class LowSugarProvider implements MacronutrientsProvider {
 
     private final String url = "http://nosugar.com";
