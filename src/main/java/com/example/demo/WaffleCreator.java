@@ -2,31 +2,60 @@ package com.example.demo;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Random;
+
 
 class WaffleCreator {
 
     Waffle prepare(String name, Waffle.Type type) {
         if (type == Waffle.Type.LOW_SUGAR) {
             MacronutrientsProvider ingredientsProvider
-                    = new MacronutrientsProvider("http://lowsugar.com");
+                    = MacronutrientsProviderLocator.get("nosugar");
             Macronutrients macro = ingredientsProvider.fetch();
-            if (macro.isFit()) {
+            if (macro.isLowSugar()) {
                 return new Waffle(name, macro);
             }
-            throw new TooSweetWaffle();
+            throw new HighSugarWaffle();
         }
-        if (type == Waffle.Type.SUPER_SWEET) {
+        if (type == Waffle.Type.HIGH_SUGAR) {
             MacronutrientsProvider ingredientsProvider
-                    = new MacronutrientsProvider("http://ilovesugar.com");
+                    = MacronutrientsProviderLocator.get("gimmeSugar");
             Macronutrients macro = ingredientsProvider.fetch();
-            if (macro.hasMuchSugar()) {
+            if (macro.isHighSugar()) {
                 return new Waffle(name, macro);
-            } else {
-                throw new NotEnoughSugar();
             }
+            throw new LowSugarWaffle();
         }
         return new Waffle(name, new Macronutrients(0, 0, 0));
     }
+
+}
+
+
+class MacronutrientsProvider {
+    private final String url;
+
+    MacronutrientsProvider(String url) {
+        this.url = url;
+    }
+
+    Macronutrients fetch() {
+        //do http call...
+        if (new Random().nextBoolean()) {
+            throw new IllegalStateException();
+        }
+        Random rand = new Random(100);
+        return new Macronutrients(rand.nextFloat() * 100, rand.nextFloat() * 100, rand.nextFloat() * 100);
+    }
+
+
+}
+
+class HighSugarWaffle extends RuntimeException {
+
+}
+
+class LowSugarWaffle extends RuntimeException {
 
 }
 
@@ -44,11 +73,3 @@ class MacronutrientsProviderLocator {
 
 }
 
-
-class TooSweetWaffle extends RuntimeException {
-
-}
-
-class NotEnoughSugar extends RuntimeException {
-
-}

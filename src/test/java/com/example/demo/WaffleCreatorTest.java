@@ -1,30 +1,35 @@
 package com.example.demo;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 class WaffleCreatorTest {
 
     WaffleCreator waffleCreator = new WaffleCreator();
 
     @Test
-    void canCreateSweetWaffle() {
+    void canCreateLowSugarWaffle() {
+
         //when
-        Waffle withSugar = waffleCreator.prepare("FIT DIAMOND", Waffle.Type.SUPER_SWEET);
+        Waffle lowSugarBar = waffleCreator.prepare("PROTEIN BAR", Waffle.Type.LOW_SUGAR);
 
         //then
-        assertThat(withSugar.isLowSugar()).isFalse();
+        assertThat(lowSugarBar.isLowSugar()).isTrue();
+
     }
 
     @Test
-    void canCreateFitWaffle() {
+    void canCreateHighSugarWaffle() {
+
         //when
-        Waffle fit = waffleCreator.prepare("FIT DIAMOND", Waffle.Type.LOW_SUGAR);
+        Waffle highSugarBar = waffleCreator.prepare("CHOCOLATE BAR", Waffle.Type.HIGH_SUGAR);
 
         //then
-        assertThat(fit.isLowSugar()).isTrue();
+        assertThat(highSugarBar.isLowSugar()).isFalse();
     }
-
 
 }
