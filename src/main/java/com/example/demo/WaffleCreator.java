@@ -38,9 +38,7 @@ class MacronutrientsProvider {
 
     Macronutrients fetch() {
         //do http call...
-        if (new Random().nextBoolean()) {
-            throw new IllegalStateException();
-        }
+
         Random rand = new Random(100);
         return new Macronutrients(rand.nextFloat() * 100, rand.nextFloat() * 100, rand.nextFloat() * 100);
     }
