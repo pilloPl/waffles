@@ -14,6 +14,7 @@ class WaffleCreatorTest {
         //given
         MacronutrientsProvider stubbed = Mockito.mock(MacronutrientsProvider.class);
         Mockito.when(stubbed.fetch()).thenReturn(new Macronutrients(1, 1, 1));
+        BeanFactory.put("nosugar", stubbed, MacronutrientsProvider.class);
 
         //when
         Waffle lowSugarBar = waffleCreator.prepare("PROTEIN BAR", Waffle.Type.LOW_SUGAR);
@@ -28,6 +29,7 @@ class WaffleCreatorTest {
         //given
         MacronutrientsProvider stubbed = Mockito.mock(MacronutrientsProvider.class);
         Mockito.when(stubbed.fetch()).thenReturn(new Macronutrients(100, 1, 1));
+        BeanFactory.put("gimmeSugar", stubbed, MacronutrientsProvider.class);
         //when
         Waffle highSugarBar = waffleCreator.prepare("CHOCOLATE BAR", Waffle.Type.HIGH_SUGAR);
 
